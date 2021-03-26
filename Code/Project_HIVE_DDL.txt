@@ -1,0 +1,156 @@
+Hive:
+
+#-------------------------------------------------------------------
+#Create Tables in Hive:
+#-------------------------------------------------------------------
+
+CREATE TABLE Weather (
+dt_iso TIMESTAMP,
+city_name STRING,
+temp DOUBLE,
+temp_min DOUBLE,
+temp_max DOUBLE,
+pressure INT,	
+humidity INT,	
+wind_speed INT,
+wind_deg INT,
+rain_1h DOUBLE,
+rain_3h DOUBLE,
+snow_3h DOUBLE,
+clouds_all INT,
+weather_id INT,
+weather_main STRING,
+weather_description STRING,
+weather_icon STRING)
+row format delimited fields terminated by ',' stored as textfile;
+
+
+CREATE TABLE Energy (
+time TIMESTAMP,
+generation_biomass INT,
+generation_fossil INT,
+brown_coal_lignite INT,
+generation_fossil_coal_derived_gas INT,
+generation_fossil_gas INT,
+generation_fossil_hard_coal INT,
+generation_fossil_oil INT,
+generation_fossil_oil_shale INT,
+generation_fossil_peat INT,
+generation_geothermal INT,
+generation_hydro_pumped_storage_aggregated INT,
+generation_hydro_pumped_storage_consumption INT,
+generation_hydro_run_of_river_and_poundage INT,
+generation_hydro_water_reservoir INT,
+generation_marine INT,
+generation_nuclear INT,
+generation_other INT,	 
+generation_other_renewable INT, 
+generation_solar INT,
+generation_waste INT,
+generation_wind_offshore INT,
+generation_wind_onshore	INT,
+forecast_solar_day_ahead INT,
+forecast_wind_offshore_day_ahead INT,
+forecast_wind_onshore_day_ahead INT,
+total_load_forecast INT,	
+total_load_actual INT,
+price_day_ahead DOUBLE,	
+price_actual DOUBLE)
+row format delimited fields terminated by ',' stored as textfile;
+
+#-------------------------------------------------------------------
+#Load the Data into Hive
+#-------------------------------------------------------------------
+load data local inpath '/home/cloudera/Downloads/weather_features.csv' into table Weather;
+
+load data local inpath '/home/cloudera/Downloads/energy_dataset.csv' into table Energy;
+
+#-------------------------------------------------------------------
+#Run Queries to get metrix
+#-------------------------------------------------------------------
+Select AVG(generation_biomass),MAX(generation_biomass),MIN(generation_biomass), STDDEV(generation_biomass) FROM energy;
+Select AVG(generation_biomass),MAX(generation_biomass),MIN(generation_biomass), STDDEV(generation_biomass) FROM energy;
+Select AVG(generation_fossil),MAX(generation_fossil),MIN(generation_fossil), STDDEV(generation_fossil) FROM energy;
+Select AVG(brown_coal_lignite),MAX(brown_coal_lignite),MIN(brown_coal_lignite), STDDEV(brown_coal_lignite) FROM energy;
+Select AVG(generation_fossil_coal_derived_gas),MAX(generation_fossil_coal_derived_gas),MIN(generation_fossil_coal_derived_gas), STDDEV(generation_fossil_coal_derived_gas) FROM energy;
+Select AVG(generation_fossil_gas),MAX(generation_fossil_gas),MIN(generation_fossil_gas), STDDEV(generation_fossil_gas) FROM energy;
+Select AVG(generation_fossil_hard_coal),MAX(generation_fossil_hard_coal),MIN(generation_fossil_hard_coal), STDDEV(generation_fossil_hard_coal) FROM energy;
+Select AVG(generation_fossil_oil),MAX(generation_fossil_oil),MIN(generation_fossil_oil), STDDEV(generation_fossil_oil) FROM energy;
+Select AVG(generation_fossil_oil_shale),MAX(generation_fossil_oil_shale),MIN(generation_fossil_oil_shale), STDDEV(generation_fossil_oil_shale) FROM energy;
+Select AVG(generation_fossil_peat),MAX(generation_fossil_peat),MIN(generation_fossil_peat), STDDEV(generation_fossil_peat) FROM energy;
+Select AVG(generation_geothermal),MAX(generation_geothermal),MIN(generation_geothermal), STDDEV(generation_geothermal) FROM energy;
+Select AVG(generation_hydro_pumped_storage_aggregated),MAX(generation_hydro_pumped_storage_aggregated),MIN(generation_hydro_pumped_storage_aggregated), STDDEV(generation_hydro_pumped_storage_aggregated) FROM energy;
+Select AVG(generation_hydro_pumped_storage_consumption),MAX(generation_hydro_pumped_storage_consumption),MIN(generation_hydro_pumped_storage_consumption), STDDEV(generation_hydro_pumped_storage_consumption) FROM energy;
+Select AVG(generation_hydro_run_of_river_and_poundage),MAX(generation_hydro_run_of_river_and_poundage),MIN(generation_hydro_run_of_river_and_poundage), STDDEV(generation_hydro_run_of_river_and_poundage) FROM energy;
+Select AVG(generation_hydro_water_reservoir),MAX(generation_hydro_water_reservoir),MIN(generation_hydro_water_reservoir), STDDEV(generation_hydro_water_reservoir) FROM energy;
+Select AVG(generation_marine),MAX(generation_marine),MIN(generation_marine), STDDEV(generation_marine) FROM energy;
+Select AVG(generation_nuclear),MAX(generation_nuclear),MIN(generation_nuclear), STDDEV(generation_nuclear) FROM energy;
+Select AVG(generation_other),MAX(generation_other),MIN(generation_other), STDDEV(generation_other) FROM energy;
+Select AVG(generation_other_renewable),MAX(generation_other_renewable),MIN(generation_other_renewable), STDDEV(generation_other_renewable) FROM energy;
+Select AVG(generation_solar),MAX(generation_solar),MIN(generation_solar), STDDEV(generation_solar) FROM energy;
+Select AVG(generation_waste),MAX(generation_waste),MIN(generation_waste), STDDEV(generation_waste) FROM energy;
+Select AVG(generation_wind_offshore),MAX(generation_wind_offshore),MIN(generation_wind_offshore), STDDEV(generation_wind_offshore) FROM energy;
+Select AVG(generation_wind_onshore),MAX(generation_wind_onshore),MIN(generation_wind_onshore), STDDEV(generation_wind_onshore) FROM energy;
+Select AVG(forecast_solar_day_ahead),MAX(forecast_solar_day_ahead),MIN(forecast_solar_day_ahead), STDDEV(forecast_solar_day_ahead) FROM energy;
+Select AVG(forecast_wind_offshore_day_ahead),MAX(forecast_wind_offshore_day_ahead),MIN(forecast_wind_offshore_day_ahead), STDDEV(forecast_wind_offshore_day_ahead) FROM energy;
+Select AVG(forecast_wind_onshore_day_ahead),MAX(forecast_wind_onshore_day_ahead),MIN(forecast_wind_onshore_day_ahead), STDDEV(forecast_wind_onshore_day_ahead) FROM energy;
+Select AVG(total_load_forecast),MAX(total_load_forecast),MIN(total_load_forecast), STDDEV(total_load_forecast) FROM energy;
+Select AVG(total_load_actual),MAX(total_load_actual),MIN(total_load_actual), STDDEV(total_load_actual) FROM energy;
+Select AVG(price_day_ahead),MAX(price_day_ahead),MIN(price_day_ahead), STDDEV(price_day_ahead) FROM energy;
+Select AVG(price_actual),MAX(price_actual),MIN(price_actual), STDDEV(price_actual) FROM energy;
+Select AVG(price_actual),MAX(price_actual),MIN(price_actual), STDDEV(price_actual) FROM energy;
+
+Select city_name, Count(city_name) from weather group by city_name;
+Select city_name, weather_description, Count(city_name)from weather group by city_name, weather_description order by city_name, weather_description; 
+Select city_name, weather_description, Count(city_name), AVG(temp),MAX(temp),MIN(temp), STDDEV(temp)from weather group by city_name, weather_description order by city_name, weather_description; 
+Select city_name, weather_description, Count(city_name), AVG(temp_min),MAX(temp_min),MIN(temp_min), STDDEV(temp_min)from weather group by city_name, weather_description order by city_name, weather_description; 
+Select city_name, weather_description, Count(city_name), AVG(temp_max),MAX(temp_max),MIN(temp_max), STDDEV(temp_max)from weather group by city_name, weather_description order by city_name, weather_description; 
+Select city_name, weather_description, Count(city_name), AVG(pressure),MAX(pressure),MIN(pressure), STDDEV(pressure)from weather group by city_name, weather_description order by city_name, weather_description; 
+Select city_name, weather_description, Count(city_name), AVG(humidity),MAX(humidity),MIN(humidity), STDDEV(humidity)from weather group by city_name, weather_description order by city_name, weather_description; 
+Select city_name, weather_description, Count(city_name), AVG(rain_1h),MAX(rain_1h),MIN(rain_1h), STDDEV(rain_1h)from weather group by city_name, weather_description order by city_name, weather_description; 
+Select city_name, weather_description, Count(city_name), AVG(rain_2h),MAX(rain_2h),MIN(rain_2h), STDDEV(rain_2h)from weather group by city_name, weather_description order by city_name, weather_description; 
+Select city_name, weather_description, Count(city_name), AVG(rain_3h),MAX(rain_3h),MIN(rain_3h), STDDEV(rain_3h)from weather group by city_name, weather_description order by city_name, weather_description; 
+
+Cassandra
+
+#-------------------------------------------------------------------
+#Create Tables in Cassandra:
+#-------------------------------------------------------------------
+
+CREATE TABLE Energy (
+time TEXT PRIMARY KEY,
+generation_biomass INT,
+generation_fossil INT,
+brown_coal_lignite INT,
+generation_fossil_coal_derived_gas INT,
+generation_fossil_gas INT,
+generation_fossil_hard_coal INT,
+generation_fossil_oil INT,
+generation_fossil_oil_shale INT,
+generation_fossil_peat INT,
+generation_geothermal INT,
+generation_hydro_pumped_storage_aggregated INT,
+generation_hydro_pumped_storage_consumption INT,
+generation_hydro_run_of_river_and_poundage INT,
+generation_hydro_water_reservoir INT,
+generation_marine INT,
+generation_nuclear INT,
+generation_other INT,	 
+generation_other_renewable INT, 
+generation_solar INT,
+generation_waste INT,
+generation_wind_offshore   INT,
+generation_wind_onshore  INT,
+forecast_solar_day_ahead INT,
+forecast_wind_offshore_day_ahead INT,
+forecast_wind_onshore_day_ahead INT,
+total_load_forecast INT,	
+total_load_actual INT,
+price_day_ahead DECIMAL,	
+price_actual DECIMAL)
+
+#-------------------------------------------------------------------
+#Load the Data into Cassandra
+#-------------------------------------------------------------------
+copy energy (time, generation_biomass, generation_fossil, brown_coal_lignite, generation_fossil_coal_derived_gas, generation_fossil_gas, generation_fossil_hard_coal, generation_fossil_oil, generation_fossil_oil_shale, generation_fossil_peat, generation_geothermal, generation_hydro_pumped_storage_aggregated, generation_hydro_pumped_storage_consumption, generation_hydro_run_of_river_and_poundage, generation_hydro_water_reservoir, generation_marine, generation_nuclear, generation_other, generation_other_renewable, generation_solar, generation_waste, generation_wind_offshore, generation_wind_onshore, forecast_solar_day_ahead, forecast_wind_offshore_day_ahead, forecast_wind_onshore_day_ahead, total_load_forecast, total_load_actual, price_day_ahead DECIMAL, price_actual DECIMAL) from 'E:\UMKC\CSC590\Project\ed.csv' with delimiter=',' and header = true; 
+
