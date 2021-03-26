@@ -1,0 +1,111 @@
+/*
+	There are some of the simple hive queries that I ran
+	to try and pull some useful data from the data sets.
+*/
+
+#---------------------------------------------------------
+#List the city names and their energy price expenditures
+#---------------------------------------------------------
+
+SELECT w.city_name, AVG(e.price_actual) as price 
+	FROM weather AS w 
+	INNER JOIN energy AS e 
+	ON w.dt_iso = e.time 
+	GROUP BY w.city_name;
+	
+#---------------------------------------------------------
+#List the energy load on cities when their temperatures
+#are well above both high and low temps
+#---------------------------------------------------------
+
+SELECT w.city_name, AVG(e.total_load_actual) 
+	FROM weather AS w
+	INNER JOIN energy AS e
+	ON w.dt_iso = e.time
+	WHERE w.temp > 383.15 OR w.temp < 303.15
+	GROUP BY w.city_name;
+	
+#---------------------------------------------------------
+#List the energy load on cities when their temperatures
+#are at or around room temperatures.
+#---------------------------------------------------------
+
+SELECT w.city_name, AVG(e.total_load_actual) 
+	FROM weather AS w
+	INNER JOIN energy AS e
+	ON w.dt_iso = e.time
+	WHERE w.temp > 393.15 AND w.temp < 398.15
+	GROUP BY w.city_name;
+	
+#---------------------------------------------------------
+#This is an attempt at a query with nested queries 
+#within in them.  Joins of joins
+#---------------------------------------------------------
+SELECT *
+	FROM (SELECT w.city_name
+			FROM weather AS w
+			INNER JOIN energy AS e
+			ON w.dt_iso = e.time
+			WHERE w.temp < 383.15 OR w.temp > 303.15 
+			GROUP BY w.city_name)
+			AS t1
+	INNER JOIN (SELECT w.city_name
+			FROM weather AS w
+			INNER JOIN energy AS e
+			ON w.dt_iso = e.time
+			WHERE w.temp > 393.15 AND w.temp < 398.15 
+			GROUP BY w.city_name)
+			AS t2
+	ON t1.city_name = t2.city_name
+	GROUP BY t1.city_name;
+	
+#---------------------------------------------------------
+#Here is the code for the creation of a new table for 
+#the same data but with an addtional field for partitions.
+#---------------------------------------------------------
+
+CREATE TABLE weather_partition(
+	dt_iso STRING,
+	city_name STRING, 
+	temp FLOAT, 
+	temp_min FLOAT, 
+	temp_max FLOAT, 
+	pressure INT, 
+	humidity INT, 
+	wind_speed INT, 
+	wind_deg INT, 
+	rain_1h FLOAT, 
+	rain_3h FLOAT, 
+	snow_3h FLOAT, 
+	clouds_all INT, 
+	weather_id INT, 
+	weather_main STRING, 
+	weather_description STRING, 
+	weather_icon STRING) 
+PARTITIONED BY(name STRING) 
+row format 
+delimited fields 
+terminated  by ',' 
+stored as textfile;
+
+#---------------------------------------------------------
+#Here is the creation of one of the partitions.  The
+#pattern was repeated for all months and all 5 cities.
+#---------------------------------------------------------
+
+ALTER TABLE weather_partition ADD PARTITION (name='July');
+
+INSERT OVERWRITE TABLE weather_partition 
+	PARTITION (name='July') 
+	SELECT * FROM weather WHERE month(dt_iso) = 7;
+
+#---------------------------------------------------------
+#Here are a couple queries to test the speed up of 
+#partitioning.  The first checks for some data without
+#using the partition and the second takes advantage of 
+#the partition.
+#---------------------------------------------------------
+
+SELECT AVG(temp) FROM weather_partition WHERE city_name = 'Valencia' AND month(dt_iso) = 11;
+
+SELECT AVG(temp) FROM weather_partition WHERE name = 'Valencia' AND month(dt_iso) = 11;
